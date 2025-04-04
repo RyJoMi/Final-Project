@@ -4,12 +4,14 @@ let root = 440;
 let maj7 = [1, 1.25, 1.5, 1.875];
 let dom7 = [1, 1.25, 1.5, 1.8];
 let min7 = [1, 1.2, 1.5, 1.8];
-let quality = [
-  root * `${document.getElementById("chor1Qual").value}`[0],
-  root * `${document.getElementById("chor1Qual").value}`[1],
-  root * `${document.getElementById("chor1Qual").value}`[2],
-  root * `${document.getElementById("chor1Qual").value}`[3],
-];
+// let quality = [
+//   root * `${document.getElementById("chor1Qual").value}`[0],
+//   root * `${document.getElementById("chor1Qual").value}`[1],
+//   root * `${document.getElementById("chor1Qual").value}`[2],
+//   root * `${document.getElementById("chor1Qual").value}`[3],
+// ];
+const dropdown = document.getElementById("chor1Qual");
+const selectedIndex = dropdown.value;
 
 const playChord1 = function () {
   //saves current time for reference
@@ -22,10 +24,10 @@ const playChord1 = function () {
   let myOsc4 = thisAudio.createOscillator();
 
   //frequencies
-  myOsc1.frequency.value = quality[0];
-  myOsc2.frequency.value = quality[1];
-  myOsc3.frequency.value = quality[2];
-  myOsc4.frequency.value = quality[3];
+  myOsc1.frequency.value = frequencyArray[selectedIndex][0];
+  myOsc2.frequency.value = frequencyArray[selectedIndex][1];
+  myOsc3.frequency.value = frequencyArray[selectedIndex][2];
+  myOsc4.frequency.value = frequencyArray[selectedIndex][3];
   //wave
   myOsc1.type = "triangle";
   myOsc2.type = "triangle";
