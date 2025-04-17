@@ -9,15 +9,31 @@ const chordLibrary = {
 
 const thisAudio = new AudioContext();
 
+//gain node for chord 1
+const gain1 = thisAudio.createGain();
+gain1.connect(thisAudio.destination);
+gain1.gain.value = 0.5;
+
+//gain node for chord 2
+const gain2 = thisAudio.createGain();
+gain2.connect(thisAudio.destination);
+gain2.gain.value = 0.5;
+
+//dropdown for chord 1 quality
 const dropdown = document.getElementById("chor1Qual");
 let currentChord = null;
+//root for chord 1
 let root = 440;
 
 let qualKeys = Object.keys(chordLibrary);
 
-qualKeys.forEach((qual) => {
+// qualKeys.forEach((qual) => {
+//   dropdown.innerHTML += `<option value=${qual}>${qual}</option>`;
+// });
+
+for (let qual in chordLibrary) {
   dropdown.innerHTML += `<option value=${qual}>${qual}</option>`;
-});
+}
 
 // let quality = [
 //   root * `${document.getElementById("chor1Qual").value}`[0],
@@ -26,7 +42,12 @@ qualKeys.forEach((qual) => {
 //   root * `${document.getElementById("chor1Qual").value}`[3],
 // ];
 
-dropdown.addEventListener("click", (event) => {
+// dropdown.addEventListener("click", (event) => {
+//   let newQual = event.target.value;
+//   currentChord = chordLibrary[newQual];
+// });
+
+dropdown.addEventListener("change", (event) => {
   let newQual = event.target.value;
   currentChord = chordLibrary[newQual];
 });
@@ -41,39 +62,9 @@ const playChord1 = function () {
   });
 
   oscillators.forEach((someOsc) => {
-    someOsc.connect(thisAudio.destination);
+    someOsc.connect(thisAudio.gain1);
     someOsc.start();
   });
-
-  //saves current time for reference
-  // let now = thisAudio.currentTime;
-
-  // //create osc
-  // let myOsc1 = thisAudio.createOscillator();
-  // let myOsc2 = thisAudio.createOscillator();
-  // let myOsc3 = thisAudio.createOscillator();
-  // let myOsc4 = thisAudio.createOscillator();
-
-  // //frequencies
-  // myOsc1.frequency.value = frequencyArray[selectedIndex][0];
-  // myOsc2.frequency.value = frequencyArray[selectedIndex][1];
-  // myOsc3.frequency.value = frequencyArray[selectedIndex][2];
-  // myOsc4.frequency.value = frequencyArray[selectedIndex][3];
-  // //wave
-  // myOsc1.type = "triangle";
-  // myOsc2.type = "triangle";
-  // myOsc3.type = "triangle";
-  // myOsc4.type = "triangle";
-  // //connect
-  // myOsc1.connect(thisAudio.destination);
-  // myOsc2.connect(thisAudio.destination);
-  // myOsc3.connect(thisAudio.destination);
-  // myOsc4.connect(thisAudio.destination);
-  // //start
-  // myOsc1.start();
-  // myOsc2.start();
-  // myOsc3.start();
-  // myOsc4.start();
 };
 
 let playBut = document.getElementById("play");
