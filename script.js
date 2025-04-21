@@ -2,9 +2,6 @@ const chordLibrary = {
   maj7: [1, 1.25, 1.5, 1.875],
   dom7: [1, 1.25, 1.5, 1.8],
   min7: [1, 1.2, 1.5, 1.8],
-  min3: [1, 1.2, 1.5, 1.8],
-  min6: [1, 1.2, 1.5, 1.8],
-  min79: [1, 1.2, 1.5, 1.8],
 };
 
 const thisAudio = new AudioContext();
@@ -20,53 +17,161 @@ gain2.connect(thisAudio.destination);
 gain2.gain.value = 0.5;
 
 //dropdown for chord 1 quality
-const dropdown = document.getElementById("chor1Qual");
-let currentChord = null;
+const dropdown1 = document.getElementById("chor1Qual");
+let currentChord1 = null;
 //root for chord 1
-let root = 440;
+let root1 = 440;
 
+//dropdown for chord 2 quality
+const dropdown2 = document.getElementById("chor2Qual");
+let currentChord2 = null;
+//root for chord 2
+let root2 = 440;
+
+//Dropdowns
 let qualKeys = Object.keys(chordLibrary);
 
-// qualKeys.forEach((qual) => {
-//   dropdown.innerHTML += `<option value=${qual}>${qual}</option>`;
-// });
-
 for (let qual in chordLibrary) {
-  dropdown.innerHTML += `<option value=${qual}>${qual}</option>`;
+  dropdown1.innerHTML += `<option value=${qual}>${qual}</option>`;
 }
 
-// let quality = [
-//   root * `${document.getElementById("chor1Qual").value}`[0],
-//   root * `${document.getElementById("chor1Qual").value}`[1],
-//   root * `${document.getElementById("chor1Qual").value}`[2],
-//   root * `${document.getElementById("chor1Qual").value}`[3],
-// ];
+for (let qual in chordLibrary) {
+  dropdown2.innerHTML += `<option value=${qual}>${qual}</option>`;
+}
 
-// dropdown.addEventListener("click", (event) => {
-//   let newQual = event.target.value;
-//   currentChord = chordLibrary[newQual];
-// });
-
-dropdown.addEventListener("change", (event) => {
+//dropdown for chord 1
+dropdown1.addEventListener("change", (event) => {
   let newQual = event.target.value;
-  currentChord = chordLibrary[newQual];
+  currentChord1 = chordLibrary[newQual];
 });
 
-const selectedIndex = dropdown.value;
-let oscillators = [];
+//dropdown for chord 2
+dropdown2.addEventListener("change", (event) => {
+  let newQual = event.target.value;
+  currentChord2 = chordLibrary[newQual];
+});
+
+//-------------------Osc for chord 1--------------------
+const selectedIndex1 = dropdown1.value;
+let oscillators1 = [];
 const playChord1 = function () {
-  currentChord.forEach((e) => {
-    oscillators.push(
-      new OscillatorNode(thisAudio, { frequency: e * root, type: "triangle" })
+  currentChord1.forEach((e) => {
+    oscillators1.push(
+      new OscillatorNode(thisAudio, { frequency: e * root1, type: "triangle" })
     );
   });
 
-  oscillators.forEach((someOsc) => {
-    someOsc.connect(thisAudio.gain1);
-    someOsc.start();
+  oscillators1.forEach((someOsc1) => {
+    someOsc1.connect(gain1);
+    someOsc1.start();
   });
 };
 
-let playBut = document.getElementById("play");
+//-------------------Osc for chord 2--------------------
+const selectedIndex2 = dropdown2.value;
+let oscillators2 = [];
+const playChord2 = function () {
+  currentChord2.forEach((e) => {
+    oscillators2.push(
+      new OscillatorNode(thisAudio, { frequency: e * root2, type: "triangle" })
+    );
+  });
 
-playBut.addEventListener("click", playChord1);
+  oscillators2.forEach((someOsc2) => {
+    someOsc2.connect(gain1);
+    someOsc2.start();
+  });
+};
+
+//-------toggle for chord 1-------------
+let isPlaying1 = false;
+
+const toggleOscillator1 = function () {
+  if (isPlaying1) {
+    oscillators1.forEach((oscillators1) => {
+      oscillators1.stop(); // Stop the oscillator
+      oscillators1.disconnect(); // Disconnect it from the gain node
+
+      isPlaying1 = false;
+      document.getElementById("play1").textContent = "Play Chord 1"; // Update button text
+    });
+  } else {
+    currentChord1.forEach((e) => {
+      oscillators1.push(
+        new OscillatorNode(thisAudio, {
+          frequency: e * root1,
+          type: "triangle",
+        })
+      );
+    });
+    oscillators1.forEach((someOsc1) => {
+      someOsc1.connect(gain1);
+      someOsc1.start();
+
+      isPlaying1 = true;
+      document.getElementById("play1").textContent = "Stop Chord 1"; // Update button text
+    });
+  }
+};
+
+let playBut1 = document.getElementById("play1");
+
+playBut1.addEventListener("click", toggleOscillator1);
+
+dropdown1.addEventListener("change", (event) => {
+  let newQual = event.target.value;
+  currentChord1 = chordLibrary[newQual];
+});
+//-----------------------------------------------
+
+//-------toggle for chord 2-------------
+let isPlaying2 = false;
+
+const toggleOscillator2 = function () {
+  if (isPlaying2) {
+    oscillators2.forEach((oscillators) => {
+      oscillators2.stop(); // Stop the oscillator
+      oscillators2.disconnect(); // Disconnect it from the gain node
+
+      isPlaying2 = false;
+      document.getElementById("play2").textContent = "Play Chord 1"; // Update button text
+    });
+  } else {
+    currentChord2.forEach((e) => {
+      oscillators2.push(
+        new OscillatorNode(thisAudio, {
+          frequency: e * root2,
+          type: "triangle",
+        })
+      );
+    });
+    oscillators2.forEach((someOsc2) => {
+      someOsc2.connect(gain1);
+      someOsc2.start();
+
+      isPlaying2 = true;
+      document.getElementById("play2").textContent = "Stop Chord 1"; // Update button text
+    });
+  }
+};
+
+let playBut2 = document.getElementById("play2");
+
+playBut2.addEventListener("click", toggleOscillator2);
+
+dropdown2.addEventListener("change", (event) => {
+  let newQual = event.target.value;
+  currentChord2 = chordLibrary[newQual];
+});
+//--------------------------------------------
+
+const root1slide = document.getElementById("root1");
+const root2slide = document.getElementById("root2");
+
+root1slide.addEventListener("click", () => {
+  let root1 = root1slide.value;
+});
+
+root2slide.addEventListener("click", () => {
+  let root2 = root2slide.value;
+});
