@@ -18,13 +18,13 @@ gain2.gain.value = 0.5;
 
 //dropdown for chord 1 quality
 const dropdown1 = document.getElementById("chor1Qual");
-let currentChord1 = null;
+let currentChord1 = maj7;
 //root for chord 1
 let root1 = 440;
 
 //dropdown for chord 2 quality
 const dropdown2 = document.getElementById("chor2Qual");
-let currentChord2 = null;
+let currentChord2 = maj7;
 //root for chord 2
 let root2 = 440;
 
