@@ -1,4 +1,5 @@
 const chordLibrary = {
+  fifth: [1, 1.5],
   maj7: [1, 1.25, 1.5, 1.875],
   dom7: [1, 1.25, 1.5, 1.8],
   min7: [1, 1.2, 1.5, 1.8],
@@ -9,22 +10,22 @@ const thisAudio = new AudioContext();
 //gain node for chord 1
 const gain1 = thisAudio.createGain();
 gain1.connect(thisAudio.destination);
-gain1.gain.value = 0.5;
+gain1.gain.value = 0.125;
 
 //gain node for chord 2
 const gain2 = thisAudio.createGain();
 gain2.connect(thisAudio.destination);
-gain2.gain.value = 0.5;
+gain2.gain.value = 0.125;
 
 //dropdown for chord 1 quality
 const dropdown1 = document.getElementById("chor1Qual");
-let currentChord1 = chordLibrary.maj7;
+let currentChord1 = chordLibrary.fifth;
 //root for chord 1
 let root1 = 440;
 
 //dropdown for chord 2 quality
 const dropdown2 = document.getElementById("chor2Qual");
-let currentChord2 = chordLibrary.maj7;
+let currentChord2 = chordLibrary.fifth;
 //root for chord 2
 let root2 = 440;
 
@@ -88,12 +89,13 @@ let isPlaying1 = false;
 
 const toggleOscillator1 = function () {
   if (isPlaying1) {
-    oscillators1.forEach((oscillators1) => {
-      oscillators1.stop(); // Stop the oscillator
-      oscillators1.disconnect(); // Disconnect it from the gain node
+    oscillators1.forEach((osc1) => {
+      osc1.stop(); // Stop the oscillator
+      osc1.disconnect(); // Disconnect it from the gain node
 
       isPlaying1 = false;
       document.getElementById("play1").textContent = "Play Chord 1"; // Update button text
+      oscillators1 = [];
     });
   } else {
     currentChord1.forEach((e) => {
@@ -129,12 +131,13 @@ let isPlaying2 = false;
 
 const toggleOscillator2 = function () {
   if (isPlaying2) {
-    oscillators2.forEach((oscillators) => {
-      oscillators2.stop(); // Stop the oscillator
-      oscillators2.disconnect(); // Disconnect it from the gain node
+    oscillators2.forEach((osc2) => {
+      osc2.stop(); // Stop the oscillator
+      osc2.disconnect(); // Disconnect it from the gain node
 
       isPlaying2 = false;
       document.getElementById("play2").textContent = "Play Chord 1"; // Update button text
+      oscillators2 = [];
     });
   } else {
     currentChord2.forEach((e) => {
@@ -168,10 +171,26 @@ dropdown2.addEventListener("change", (event) => {
 const root1slide = document.getElementById("root1");
 const root2slide = document.getElementById("root2");
 
-root1slide.addEventListener("click", () => {
-  let root1 = root1slide.value;
+root1slide.addEventListener("input", () => {
+  let root1 = root1slide.value / 1000;
+  root1 = Math.pow(root1, 0.5);
+  root1 = root1 * 800;
+  oscillators1.forEach((osc, i) => {
+    osc.frequency.linearRampToValueAtTime(
+      root1 * currentChord1[i],
+      thisAudio.currentTime + 0.01
+    );
+  });
 });
 
-root2slide.addEventListener("click", () => {
-  let root2 = root2slide.value;
+root2slide.addEventListener("input", () => {
+  let root2 = root2slide.value / 1000;
+  root2 = Math.pow(root2, 0.5);
+  root2 = root2 * 800;
+  oscillators2.forEach((osc, i) => {
+    osc.frequency.linearRampToValueAtTime(
+      root2 * currentChord2[i],
+      thisAudio.currentTime + 0.01
+    );
+  });
 });
